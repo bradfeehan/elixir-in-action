@@ -1,4 +1,5 @@
 defmodule TodoList do
+  @behaviour Access
   defstruct next_id: 1, entries: %{}
 
   def new(), do: %TodoList{}
@@ -31,29 +32,25 @@ defmodule TodoList do
     %{todo_list | entries: Map.delete(todo_list.entries, entry_id)}
   end
 
-  defimpl Access do
-    def fetch(todo_list, entry_id) do
-      Map.fetch(todo_list.entries, entry_id)
+  # Access behaviour callbacks to support todo_list[id] and put_in/2
+  @impl Access
+  def fetch(%TodoList{entries: entries}, entry_id) do
+    Map.fetch(entries, entry_id)
+  end
+
+  @impl Access
+  def get_and_update(%TodoList{entries: entries} = todo_list, entry_id, fun) do
+    case Map.get_and_update(entries, entry_id, fun) do
+      {value, new_entries} -> {value, %{todo_list | entries: new_entries}}
+      :error -> :error
     end
+  end
 
-    def get_and_update(todo_list, entry_id, fun) do
-      case Map.get_and_update(todo_list.entries, entry_id, fun) do
-        {value, new_entries} ->
-          {value, %{todo_list | entries: new_entries}}
-
-        :error ->
-          :error
-      end
-    end
-
-    def pop(todo_list, entry_id) do
-      case Map.pop(todo_list.entries, entry_id) do
-        {value, new_entries} ->
-          {value, %{todo_list | entries: new_entries}}
-
-        {nil, _} ->
-          {nil, todo_list}
-      end
+  @impl Access
+  def pop(%TodoList{entries: entries} = todo_list, entry_id) do
+    case Map.pop(entries, entry_id) do
+      {value, new_entries} -> {value, %{todo_list | entries: new_entries}}
+      {nil, _} -> {nil, todo_list}
     end
   end
 end
