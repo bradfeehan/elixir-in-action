@@ -7,6 +7,26 @@ defmodule TodoListTest do
     assert todo_list == %TodoList{next_id: 1, entries: %{}}
   end
 
+  test "creates a new todo list from a list of entries" do
+    entries = [
+      %{date: ~D[2023-12-19], title: "Dentist"},
+      %{date: ~D[2023-12-20], title: "Shopping"},
+      %{date: ~D[2023-12-19], title: "Movies"}
+    ]
+
+    todo_list = TodoList.new(entries)
+
+    # Test entries for 2023-12-19 (should have both "Movies" and "Dentist" with IDs 1 and 3)
+    entries_19 = TodoList.entries(todo_list, ~D[2023-12-19])
+    assert length(entries_19) == 2
+    assert %{date: ~D[2023-12-19], id: 1, title: "Dentist"} in entries_19
+    assert %{date: ~D[2023-12-19], id: 3, title: "Movies"} in entries_19
+
+    # Test entries for 2023-12-20 (should have "Shopping" with ID 2)
+    entries_20 = TodoList.entries(todo_list, ~D[2023-12-20])
+    assert entries_20 == [%{date: ~D[2023-12-20], id: 2, title: "Shopping"}]
+  end
+
   test "adds entries to todo list with auto-generated IDs" do
     todo_list =
       TodoList.new()
