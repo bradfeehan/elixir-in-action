@@ -128,4 +128,15 @@ defmodule TodoListTest do
     entries_20 = TodoList.entries(updated_todo_list, ~D[2023-12-20])
     assert %{date: ~D[2023-12-20], id: 1, title: "Dentist"} in entries_20
   end
+
+  test "Collectable protocol works with Enum.into" do
+    entries = [
+      %{date: ~D[2023-12-19], title: "Dentist"},
+      %{date: ~D[2023-12-20], title: "Shopping"},
+      %{date: ~D[2023-12-19], title: "Movies"}
+    ]
+
+    todo_list = Enum.into(entries, TodoList.new())
+    assert todo_list == TodoList.new(entries)
+  end
 end
