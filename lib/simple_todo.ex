@@ -40,10 +40,8 @@ defmodule TodoList do
 
   @impl Access
   def get_and_update(%TodoList{entries: entries} = todo_list, entry_id, fun) do
-    case Map.get_and_update(entries, entry_id, fun) do
-      {value, new_entries} -> {value, %{todo_list | entries: new_entries}}
-      :error -> :error
-    end
+    {value, new_entries} = Map.get_and_update(entries, entry_id, fun)
+    {value, %{todo_list | entries: new_entries}}
   end
 
   @impl Access
