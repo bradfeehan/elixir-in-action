@@ -49,8 +49,8 @@ defmodule TodoList do
   @impl Access
   def pop(%TodoList{entries: entries} = todo_list, entry_id) do
     case Map.pop(entries, entry_id) do
-      {value, new_entries} -> {value, %{todo_list | entries: new_entries}}
       {nil, _} -> {nil, todo_list}
+      {value, new_entries} -> {value, %{todo_list | entries: new_entries}}
     end
   end
 end
