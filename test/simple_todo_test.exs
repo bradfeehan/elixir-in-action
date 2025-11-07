@@ -139,4 +139,19 @@ defmodule TodoListTest do
     todo_list = Enum.into(entries, TodoList.new())
     assert todo_list == TodoList.new(entries)
   end
+
+  test "String.Chars protocol makes TodoList printable" do
+    empty_todo_list = TodoList.new()
+    assert to_string(empty_todo_list) == "#TodoList<0 entries, next_id: 1>"
+
+    todo_list =
+      TodoList.new()
+      |> TodoList.add_entry(%{date: ~D[2023-12-19], title: "Dentist"})
+      |> TodoList.add_entry(%{date: ~D[2023-12-20], title: "Shopping"})
+
+    assert to_string(todo_list) == "#TodoList<2 entries, next_id: 3>"
+
+    # Test string interpolation
+    assert "#{todo_list}" == "#TodoList<2 entries, next_id: 3>"
+  end
 end

@@ -66,3 +66,10 @@ defimpl Collectable, for: TodoList do
   defp into_callback(todo_list, :done), do: todo_list
   defp into_callback(_todo_list, :halt), do: :ok
 end
+
+defimpl String.Chars, for: TodoList do
+  def to_string(%TodoList{entries: entries, next_id: next_id}) do
+    entry_count = map_size(entries)
+    "#TodoList<#{entry_count} entries, next_id: #{next_id}>"
+  end
+end
